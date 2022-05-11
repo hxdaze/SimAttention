@@ -169,8 +169,24 @@ class SimAttention_3(nn.Module):
         # [B, 1, N_f] N_f: output dimension of encoder
         sub_feature_1 = self.online_encoder(sub1)
         sub_feature_3 = self.online_encoder(sub2)
+        # without momentum encoder
+#         with torch.no_grad():
+#             self.target_encoder = copy.deepcopy(self.online_encoder)
+#             for parameter in self.target_encoder.parameters():
+#                 parameter.requires_grad = False
+#             sub_feature_2 = self.target_encoder(sub2)
+#             sub_feature_4 = self.target_encoder(sub1)
+        
+        # with momentum encoder
         with torch.no_grad():
-            self.target_encoder = copy.deepcopy(self.online_encoder)
+            if self.target_encoder == None:
+                self.target_encoder = copy.deepcopy(self.online_encoder)
+            else:
+                for online_params, target_params in zip(self.online_encoder.parameters(), self.target_encoder.parameters()):
+                    target_weight, online_weight = target_params.data, online_params.data
+                    # moving average decay is tao
+                    tao = 0.99
+                    target_params.data = target_weight * tao + (1 - tao) * online_weight
             for parameter in self.target_encoder.parameters():
                 parameter.requires_grad = False
             sub_feature_2 = self.target_encoder(sub2)
@@ -343,7 +359,7 @@ class SimAttention_5(nn.Module):
         # [B, 6, N_f]
         # crop_feature = torch.cat((crop_feature_1, crop_feature_2), dim=1)
 
-        # attention feature
+        # attention feature [B, 1, N_f]
         attn_feature_1 = self.attention_feature(sub_feature_1, crop_feature_2)
         attn_feature_2 = self.attention_feature(sub_feature_2, crop_feature_1)
 
