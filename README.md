@@ -10,5 +10,5 @@ Version 01 运行指南：(Single GPU Version, Network Structure 1 without MLP l
 
 Version 02 运行指南：(Multi-GPU Version, Network Structure 1 without MLP layer)
 - 同上数据准备
-- 修改train_multi_gpus.py中122行数据地址，同上
-- 命令行命令：python3 -m torch.distributed.launch --nproc_per_node=8 --use_env train_multi_gpus.py
+- 修改train_multi_gpus_v1.py中122行数据地址，同上
+- 命令行命令：python3 -m torch.distributed.launch --nproc_per_node=8 --use_env train_multi_gpus_v1.py
