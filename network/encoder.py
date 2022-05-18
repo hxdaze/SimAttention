@@ -83,11 +83,13 @@ class Local_op(nn.Module):
 
 
 class SA_Layer(nn.Module):
+    # todo: add mutil-head attention
+    # todo: keep this class, design new class with name: SA_MH_Layer
     def __init__(self, channels):
         super().__init__()
         self.q_conv = nn.Conv1d(channels, channels // 4, 1, bias=False)
         self.k_conv = nn.Conv1d(channels, channels // 4, 1, bias=False)
-        self.q_conv.weight = self.k_conv.weight
+        # self.q_conv.weight = self.k_conv.weight
         self.v_conv = nn.Conv1d(channels, channels, 1)
         self.trans_conv = nn.Conv1d(channels, channels, 1)
         self.after_norm = nn.BatchNorm1d(channels)
@@ -107,6 +109,35 @@ class SA_Layer(nn.Module):
         return x
 
 
+class SA_M_Layer(nn.Module):
+    def __init__(self, channels):
+        super().__init__()
+        self.q_conv = nn.Conv1d(channels, channels, 1, bias=False)
+        self.k_conv = nn.Conv1d(channels, channels, 1, bias=False)
+        self.v_conv = nn.Conv1d(channels, channels, 1, bias=False)
+
+        self.trans_conv = nn.Conv1d(channels, channels, 1)
+        self.after_norm = nn.BatchNorm1d(channels)
+        self.act = nn.ReLU()
+        self.softmax = nn.Softmax(dim=-1)
+
+    def forward(self, x):
+        bs, f, p = x.shape
+        x_q = self.q_conv(x)  # b, n, c
+        x_q = x_q.reshape(bs, 4, -1, p).permute(0, 1, 3, 2)
+        x_k = self.k_conv(x)
+        x_k = x_k.reshape(bs, 4, -1, x.shape[-1])
+        xy = torch.matmul(x_q, x_k)
+        x_v = self.v_conv(x)
+        x_v = x_v.reshape(bs, 4, -1, x.shape[-1]).permute(0, 1, 3, 2)
+        xyz = torch.matmul(xy, x_v)
+        xyz = xyz.permute(0, 1, 3, 2).reshape(bs, p, -1)
+        xyz = self.trans_conv(xyz)
+        xyz = self.act(self.after_norm(xyz - x))
+        xyz = x + xyz
+        return xyz
+
+
 class StackedAttention(nn.Module):
     def __init__(self, channels=256):
         super().__init__()
@@ -116,10 +147,10 @@ class StackedAttention(nn.Module):
         self.bn1 = nn.BatchNorm1d(channels)
         self.bn2 = nn.BatchNorm1d(channels)
 
-        self.sa1 = SA_Layer(channels)
-        self.sa2 = SA_Layer(channels)
-        self.sa3 = SA_Layer(channels)
-        self.sa4 = SA_Layer(channels)
+        self.sa1 = SA_M_Layer(channels)
+        self.sa2 = SA_M_Layer(channels)
+        self.sa3 = SA_M_Layer(channels)
+        self.sa4 = SA_M_Layer(channels)
 
         self.relu = nn.ReLU()
 
