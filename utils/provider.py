@@ -67,3 +67,11 @@ def shift_point_cloud(batch_data, shift_range=0.1):
     for batch_index in range(B):
         batch_data[batch_index, :, :] += shifts[batch_index, :]
     return batch_data
+
+
+def pc_normalize(pc):
+    centroid = np.mean(pc, axis=0)
+    pc = pc - centroid
+    m = np.max(np.sqrt(np.sum(pc**2, axis=1)))
+    pc = pc / m
+    return pc
