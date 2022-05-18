@@ -1,7 +1,7 @@
 # SimAttention
 Contrastive Learning,  Patch Attention,  Point Cloud
 
-Version 01 运行指南：
+Version 01 运行指南：(Single GPU Version, Network without MLP layer)
 
 - 下载ModelNet数据集，并存为modelnet40_normal_resampled
 - 下载地址： https://shapenet.cs.stanford.edu/media/modelnet40_normal_resampled.zip
