@@ -46,7 +46,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.3)
 
 # train
 logger.info('Start training...')
-for epoch in range(0, EPOCH):
+for epoch in range(start_epoch, EPOCH):
     logger.info('Epoch {} is running...'.format(epoch))
     model_5.train()
     mean_loss = 0.0
