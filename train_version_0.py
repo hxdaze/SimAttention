@@ -15,6 +15,7 @@ root = '/home/akira/下载/Pointnet2_PyTorch-master/PCT/Point-Transformers-maste
 dataset = ModelNetDataSet(root)
 trainDataLoader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=True)
 
+EPOCH = 50
 aug_method = Batch_PointWOLF()
 online_encoder = PCT_Encoder().to(device)
 crossed_method = CrossedAttention(1024).to(device)
@@ -26,7 +27,7 @@ optimizer = torch.optim.SGD(model_5.parameters(), lr=0.01, momentum=0.9)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.3)
 
 print('Start training...')
-for epoch in range(0, 2):
+for epoch in range(0, EPOCH):
     print('Epoch {} is running...'.format(epoch))
     model_5.train()
     for data, cls in trainDataLoader:
