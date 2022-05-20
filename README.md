@@ -12,3 +12,4 @@ Version 02 运行指南：(Multi-GPU Version, Network Structure 1 without MLP la
 - 同上数据准备
 - 修改train_multi_gpus_v1.py中122行数据地址，同上
 - 命令行命令：python3 -m torch.distributed.launch --nproc_per_node=8 --use_env train_multi_gpus_v1.py
+- 关于命令的补充说明：https://github.com/WZMIAOMIAO/deep-learning-for-image-processing/blob/master/pytorch_classification/train_multi_GPU/README.md
