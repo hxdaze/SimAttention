@@ -10,5 +10,6 @@ Version 01 运行指南：(Single GPU Version, Network Structure 1 without MLP l
 
 Version 02 运行指南：(Multi-GPU Version, Network Structure 1 without MLP layer)
 - 同上数据准备
-- 修改train_multi_gpus_v1.py中122行数据地址，同上
-- 直接运行即可
+- 可能需要修改train_multi_gpus_v1.py中142行数据地址
+- 149行，就是用到的GPU个数，大于2即可，default后面可以修改
+- 直接运行即可脚本即可
