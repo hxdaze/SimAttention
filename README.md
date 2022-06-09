@@ -14,6 +14,10 @@ Version 02 运行指南：(Multi-GPU Version, Network Structure 1 without MLP la
 - 149行，就是用到的GPU个数，大于2即可，default后面可以修改
 - 直接运行即可脚本即可
 
+Version 02 PLUS: 更新了model中一个小部分，不需要改参数之类的
+- 同Version02准备，但是model.py更新了SimAttention_7，需要对应更新model脚本
+- train_multi_gpus_v1.py第10, 81行，SimAttention_5改成SimAttention_7
+- bs设置为16，运行50个epoch，保存结果作为下一步的输入；
 
 Version 03 运行指南：多GPU-用来训练分类网络，和评估工作
 - 同上数据准备
