@@ -13,3 +13,10 @@ Version 02 运行指南：(Multi-GPU Version, Network Structure 1 without MLP la
 - 可能需要修改train_multi_gpus_v1.py中142行数据地址
 - 149行，就是用到的GPU个数，大于2即可，default后面可以修改
 - 直接运行即可脚本即可
+
+
+Version 03 运行指南：多GPU-用来训练分类网络，和评估工作
+- 同上数据准备
+- 在network里面新增shape_classifier脚本文件
+- 273行存储的是上一次训练出来的模型参数，需要根据存储位置修改
+- 其他基本不变，bs设置为32，epoch设置为50
