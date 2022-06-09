@@ -20,7 +20,7 @@ Version 02 PLUS: 更新了model中一个小部分，不需要改参数之类的
 - bs设置为16，运行50个epoch，保存结果作为下一步的输入；
 
 Version 03 运行指南：多GPU-用来训练分类网络，和评估工作
-- 同上数据准备
+- 同上数据准备，运行train_multi_cls.py
 - 在network里面新增shape_classifier脚本文件
 - 273行存储的是上一次训练出来的模型参数，需要根据存储位置修改
 - 其他基本不变，bs设置为32，epoch设置为50
