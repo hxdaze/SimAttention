@@ -1,7 +1,7 @@
-from SimAttention.network.encoder import PCT_Encoder
-from SimAttention.utils.crops import *
-from SimAttention.utils.provider import *
-from SimAttention.dataloader import ModelNetDataSet
+from network.encoder import PCT_Encoder
+from utils.crops import *
+from utils.provider import *
+from dataloader import ModelNetDataSet
 from torch.utils.data import DataLoader
 from network.shape_classifier import ShapeClassifier
 import logging
