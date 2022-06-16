@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def fps(original, npoints):
+def fps(original, npoints=1024):
     center_xyz = np.sum(original, 0)
     # 得到重心点的坐标
     center_xyz = center_xyz / len(original)
@@ -46,7 +46,7 @@ def point_in_cube(point_xyz, center_xyz, side_length):
     return flag
 
 
-def get_1_cube(point_set, center_xyz, side_length, npoints):
+def get_1_cube(point_set, center_xyz, side_length, npoints=1024):
     # 现在需要从单个点云中找到8个cube出来
     # 存储满足条件的点的索引
     output_samples = []
@@ -61,7 +61,7 @@ def get_1_cube(point_set, center_xyz, side_length, npoints):
         return get_1_cube(point_set, center_xyz, side_length + 0.2, npoints)
 
     
-def get_cubes(point_set, num_cube, side_length, npoints):
+def get_cubes(point_set, num_cube=8, side_length, npoints=1024):
     # 保存结果
     result = np.ones((num_cube, npoints, 3))
     for i in range(0, num_cube):
@@ -71,7 +71,7 @@ def get_cubes(point_set, num_cube, side_length, npoints):
     return result
 
 
-def b_get_cubes(b_point_set, num_cube, side_length, npoints):
+def b_get_cubes(b_point_set, num_cube=8, side_length, npoints=1024):
     B = b_point_set.shape[0]
     result = numpy.ones((B, num_cube, npoints, 3))
     for i in range(B):
