@@ -3,3 +3,8 @@
 1. SimAttention在import的时候需要去掉；
 2. to(device) 改成 .cuda()
 3. 用到permute的地方，容易引发DDP警告，后面需要加上.contiguous()，来保证不会损坏性能（实验表明，加上之后loss会下降更快）
+---上面的已经完成---
+
+1. 更新model，关于修改了多个cube的模型；
+2. 更新crop中的函数
+3. 更新train方法
