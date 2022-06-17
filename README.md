@@ -24,3 +24,13 @@ Version 03 运行指南：多GPU-用来训练分类网络，和评估工作
 - 在network里面新增shape_classifier脚本文件
 - 273行存储的是上一次训练出来的模型参数，需要根据存储位置修改
 - 其他基本不变，bs设置为32，epoch设置为50
+
+Version 04 运行指南：
+- 项目中增加脚本文件cube_model.py 这个和model同一层级
+- 在utils文件夹中新增cubes.py脚本文件，和crops.py同一层级
+- 在train_multi_gpus_v1.py中修改
+  - from cube_model import SimAttention_All_Cubes
+	- from utils.cubes import b_get_cubes
+	- model初始化的时候 
+		model = SimAttention_All_Cubes(aug_method, b_fps, b_get_cubes, online_encoder, crossed_method)
+	- 看一下单epoch运行的时间
