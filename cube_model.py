@@ -13,6 +13,7 @@ class SimAttention_All_Cubes(nn.Module):
                  aug_function,
                  sub_function,
                  cube_function,
+                 online_encoder
                  crossed_attention_method):
         super().__init__()
         self.aug_function = aug_function
@@ -116,3 +117,4 @@ class SimAttention_All_Cubes(nn.Module):
         loss = loss_1 + loss_2
 
         return loss.mean()
+    
