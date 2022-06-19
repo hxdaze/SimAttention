@@ -2,7 +2,7 @@ import torch
 import copy
 import torch.nn as nn
 
-from model import CrossedAttention, loss_fn
+from model import loss_fn
 
 
 class SimAttention_All_Cubes(nn.Module):
@@ -13,12 +13,12 @@ class SimAttention_All_Cubes(nn.Module):
                  aug_function,
                  sub_function,
                  cube_function,
-                 online_encoder
+                 online_encoder,
                  crossed_attention_method):
-        super().__init__()
-        self.aug_function = aug_function
-        self.sub_function = sub_function
-        self.cube_function = cube_function
+            super().__init__()
+            self.aug_function = aug_function
+            self.sub_function = sub_function
+            self.cube_function = cube_function
         
         self.online_encoder = online_encoder
         self.target_encoder = None
