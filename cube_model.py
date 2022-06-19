@@ -61,23 +61,23 @@ class SimAttention_All_Cubes(nn.Module):
 
 
         # cube feature  [B, 1, N_f]
-        cube_feature_1_1 = self.online_encoder(cube1[:, 0, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_1_2 = self.online_encoder(cube1[:, 1, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_1_3 = self.online_encoder(cube1[:, 2, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_1_4 = self.online_encoder(cube1[:, 3, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_1_5 = self.online_encoder(cube1[:, 4, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_1_6 = self.online_encoder(cube1[:, 5, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_1_7 = self.online_encoder(cube1[:, 6, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_1_8 = self.online_encoder(cube1[:, 7, :, :].reshape(-1, 1024, 3).continuous())
+        cube_feature_1_1 = self.online_encoder(cube1[:, 0, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_1_2 = self.online_encoder(cube1[:, 1, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_1_3 = self.online_encoder(cube1[:, 2, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_1_4 = self.online_encoder(cube1[:, 3, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_1_5 = self.online_encoder(cube1[:, 4, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_1_6 = self.online_encoder(cube1[:, 5, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_1_7 = self.online_encoder(cube1[:, 6, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_1_8 = self.online_encoder(cube1[:, 7, :, :].reshape(-1, 1024, 3).contiguous())
 
-        cube_feature_2_1 = self.online_encoder(cube2[:, 0, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_2_2 = self.online_encoder(cube2[:, 1, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_2_3 = self.online_encoder(cube2[:, 2, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_2_4 = self.online_encoder(cube2[:, 3, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_2_5 = self.online_encoder(cube2[:, 4, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_2_6 = self.online_encoder(cube2[:, 5, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_2_7 = self.online_encoder(cube2[:, 6, :, :].reshape(-1, 1024, 3).continuous())
-        cube_feature_2_8 = self.online_encoder(cube2[:, 7, :, :].reshape(-1, 1024, 3).continuous())
+        cube_feature_2_1 = self.online_encoder(cube2[:, 0, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_2_2 = self.online_encoder(cube2[:, 1, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_2_3 = self.online_encoder(cube2[:, 2, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_2_4 = self.online_encoder(cube2[:, 3, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_2_5 = self.online_encoder(cube2[:, 4, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_2_6 = self.online_encoder(cube2[:, 5, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_2_7 = self.online_encoder(cube2[:, 6, :, :].reshape(-1, 1024, 3).contiguous())
+        cube_feature_2_8 = self.online_encoder(cube2[:, 7, :, :].reshape(-1, 1024, 3).contiguous())
 
 
         # crop feature concat [B, 8, N_f]
