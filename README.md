@@ -31,5 +31,5 @@ Version 04 运行指南：
 - 在train_multi_gpus_v1.py中修改
   - from cube_model import SimAttention_All_Cubes
   - from utils.cubes import b_get_cubes
-  - model初始化的时候 model = SimAttention_All_Cubes(aug_method, b_fps, b_get_cubes, online_encoder, crossed_method)
+  - model初始化的时候 model = SimAttention_All_Cubes(aug_method, b_FPS, b_get_cubes, online_encoder, crossed_method)
   - 看一下单epoch运行的时间
