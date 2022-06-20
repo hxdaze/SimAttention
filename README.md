@@ -33,3 +33,10 @@ Version 04 运行指南：
   - from utils.cubes import b_get_cubes
   - model初始化的时候 model = SimAttention_All_Cubes(aug_method, b_FPS, b_get_cubes, online_encoder, crossed_method)
   - 看一下单epoch运行的时间
+
+Version 05 运行指南：
+- 项目增加文件knn_model.py文件位置和model.py在同一层；
+- utils文件夹中的crops.py有部分函数更新，直接下载最新版的即可；
+- 在train_multi_gpus_v1.py中修改：
+  - from knn_model import SimAttention_KNN
+  - model在初始化的时候：model = SimAttention_KNN(aug_method, b_FPS, new_k_patch, online_encoder, crossed_method)
