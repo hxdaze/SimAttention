@@ -67,10 +67,10 @@ def b_FPS(xyz, npoint):
     """
     device = xyz.device
     B, N, C = xyz.shape
-    centroids = torch.zeros(B, npoint, dtype=torch.long).to(device)
-    distance = torch.ones(B, N).to(device) * 1e10
-    farthest = torch.randint(0, N, (B,), dtype=torch.long).to(device)
-    batch_indices = torch.arange(B, dtype=torch.long).to(device)
+    centroids = torch.zeros(B, npoint, dtype=torch.long).cuda()
+    distance = torch.ones(B, N).cuda() * 1e10
+    farthest = torch.randint(0, N, (B,), dtype=torch.long).cuda()
+    batch_indices = torch.arange(B, dtype=torch.long).cuda()
     for i in range(npoint):
         centroids[:, i] = farthest
         centroid = xyz[batch_indices, farthest, :].view(B, 1, 3)
@@ -97,7 +97,7 @@ def new_k_patch(x, k=2048, n_patch=8, n_points=1024):
     idx = k_points(center_point_xyz, x, k)  # B, k, 2048
     idx = idx.permute(0, 2, 1)  # B, k, n_patch
 
-    new_patch = torch.zeros([n_patch, x.shape[0], n_points, x.shape[-1]]).to(device)
+    new_patch = torch.zeros([n_patch, x.shape[0], n_points, x.shape[-1]]).cuda()
     for i in range(n_patch):
         patch_idx = idx[:, :, i].reshape(x.shape[0], -1)
         _, patch_points = b_FPS(index_points(x, patch_idx), n_points)
