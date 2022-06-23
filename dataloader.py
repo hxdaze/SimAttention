@@ -2,9 +2,8 @@ import os
 import torch
 import numpy as np
 from torch.utils.data import Dataset
-from SimAttention.utils.provider import pc_normalize
-
-root = '/home/akira/下载/Pointnet2_PyTorch-master/byol_pcl/data/modelnet40_normal_resampled'
+from utils.provider import pc_normalize
+from utils.provider import feature_norm
 
 
 class ModelNetDataSet(Dataset):
@@ -53,6 +52,43 @@ class ModelNetDataSet(Dataset):
         return self._get_item(index)
 
 
+class LatentRepresentationDataSet(Dataset):
+    def __init__(self, root, split='train', cache_size=15000):
+        super().__init__()
+        self.root = root
+        # get the number of the file
+        # for here one more useless file
+        self.number_txt = len(os.listdir(self.root)) - 1
+        # get all the data path of txt
+        self.datapath = [os.path.join(self.root, str(i)) for i in range(self.number_txt)]
+        print('The size of %s data is %d' % (split, self.number_txt))
+
+        self.cache_size = cache_size  # how many data points to cache in memory
+        self.cache = {}  # from index to (point_set, cls) tuple
+
+    def __len__(self):
+        return len(self.datapath)
+
+    def _get_item(self, index):
+        if index in self.cache:
+            features, labels = self.cache[index]
+        else:
+            fn = self.datapath[index]
+            data = np.genfromtxt(fn, delimiter=',').astype(np.float64)
+            features = data[:, :-1]
+            features = feature_norm(features)
+            features = features.squeeze()
+            labels = data[:, -1].astype(int)
+
+            if len(self.cache) < self.cache_size:
+                self.cache[index] = (features, labels)
+
+        return features, labels
+
+    def __getitem__(self, index):
+        return self._get_item(index)
+
+# root = '/home/akira/下载/Pointnet2_PyTorch-master/byol_pcl/data/modelnet40_normal_resampled'
 # data = ModelNetDataSet(root)
 # DataLoader = torch.utils.data.DataLoader(data, batch_size=4, shuffle=True)
 # flag = 3
