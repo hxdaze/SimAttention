@@ -1,13 +1,19 @@
-from SimAttention.network.encoder import PCT_Encoder
+from network.encoder import PCT_Encoder
 import torch
 import numpy as np
-from SimAttention.dataloader import ModelNetDataSet
+from dataloader import ModelNetDataSet
 import os
-from SimAttention.utils.provider import *
+from utils.provider import *
 from tqdm import tqdm
 
-# get pretrained weights
+# original dataset file path
+root = '/home/akira/下载/Pointnet2_PyTorch-master/PCT/Point-Transformers-master/data/modelnet40_normal_resampled'
+# pretrained weights path
 model_save_path = r'/home/akira/下载/Pointnet2_PyTorch-master/SimAttention/scripts/weights/model-35-lr-x10.pth'
+# save txt file path
+file_path = r'/home/akira/下载/Pointnet2_PyTorch-master/SimAttention/jupyter_tests/mydata'
+if not os.path.exists(file_path):
+    os.mkdir(file_path)
 loaded_paras = torch.load(model_save_path)
 
 # get encoder model
@@ -22,12 +28,10 @@ encoder_dict.update(new_state_dict)
 encoder.load_state_dict(encoder_dict)
 
 # data preparation
-root = '/home/akira/下载/Pointnet2_PyTorch-master/PCT/Point-Transformers-master/data/modelnet40_normal_resampled'
 train_dataset = ModelNetDataSet(root, split='train')
-test_dataset = ModelNetDataSet(root, split='test')
-BATCH_SIZE = 8
+BATCH_SIZE = 16
 trainDataLoader = torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-testDataLoader = torch.utils.data.DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
+trainDataLoader = tqdm(trainDataLoader)
 
 
 def save_txt(x, label, file_path, step):
@@ -37,11 +41,6 @@ def save_txt(x, label, file_path, step):
     data = data.detach().cpu().numpy()  # [B, 1025]
     np.savetxt(file_name, data, delimiter=',')
 
-
-# txt save path
-file_path = r'/home/akira/下载/Pointnet2_PyTorch-master/SimAttention/jupyter_tests/mydata'
-
-trainDataLoader = tqdm(trainDataLoader)
 
 for step, data in enumerate(trainDataLoader):
     points, target = data
