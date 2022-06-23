@@ -75,3 +75,11 @@ def pc_normalize(pc):
     m = np.max(np.sqrt(np.sum(pc**2, axis=1)))
     pc = pc / m
     return pc
+
+
+def feature_norm(x):
+    centroid = np.mean(x, axis=1).reshape(x.shape[0], -1)
+    x = x - centroid
+    m = np.max(np.sqrt(np.sum(x**2, axis=1)))
+    x = x / m
+    return x
