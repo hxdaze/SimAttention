@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 
 class ShapeClassifier_2(nn.Module):
     def __init__(self):
