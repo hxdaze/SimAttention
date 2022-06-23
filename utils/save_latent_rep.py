@@ -35,7 +35,7 @@ trainDataLoader = tqdm(trainDataLoader)
 
 
 def save_txt(x, label, file_path, step):
-    file_name = os.path.join(file_path, str(step))
+    file_name = os.path.join(file_path, str(step) + '.txt')
     l = torch.unsqueeze(label, 1)  # [B] ---> [B, 1]
     data = torch.cat((x, l), 1)  # [B, 1024] ---> [B, 1025]
     data = data.detach().cpu().numpy()  # [B, 1025]
