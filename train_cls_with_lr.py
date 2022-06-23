@@ -29,6 +29,7 @@ mean_correct = []
 tags = ["train_acc", "train_loss", "learning_rate"]
 
 for epoch in range(0, max_epochs):
+    record_train_loss = 0.0   
     for f, l in trainDataLoader:
         f, l = f.cuda(), l.cuda()
         f = f.reshape(-1, 1024)
@@ -36,6 +37,7 @@ for epoch in range(0, max_epochs):
         optimizer.zero_grad()
         pred = classifier(f.float())
         loss = criterion(pred, l.long())
+        record_train_loss += loss.item()
         pred_choice = pred.data.max(1)[1]
         correct = pred_choice.eq(l.long().data).cpu().sum()
         mean_correct.append(correct.item() / float(f.size()[0]))
@@ -43,6 +45,8 @@ for epoch in range(0, max_epochs):
         optimizer.step()
     scheduler.step()
     train_instance_acc = np.mean(mean_correct)
+    
     tb_writer.add_scalar(tags[0], train_instance_acc, epoch)
+    tb_writer.add_scalar(tags[1], record_train_loss / len(lrds), epoch)
     tb_writer.add_scalar(tags[2], optimizer.param_groups[0]["lr"], epoch)
 
