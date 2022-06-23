@@ -53,7 +53,7 @@ class ModelNetDataSet(Dataset):
 
 
 class LatentRepresentationDataSet(Dataset):
-    def __init__(self, root, split='train', cache_size=15000):
+    def __init__(self, root, cache_size=15000):
         super().__init__()
         self.root = root
         # get the number of the file
@@ -87,15 +87,4 @@ class LatentRepresentationDataSet(Dataset):
 
     def __getitem__(self, index):
         return self._get_item(index)
-
-# root = '/home/akira/下载/Pointnet2_PyTorch-master/byol_pcl/data/modelnet40_normal_resampled'
-# data = ModelNetDataSet(root)
-# DataLoader = torch.utils.data.DataLoader(data, batch_size=4, shuffle=True)
-# flag = 3
-# i = 0
-#
-# for point, cls in DataLoader:
-#     print(point.shape, cls)
-#     i += 1
-#     if i == flag:
-#         break
+    
