@@ -57,14 +57,14 @@ class LatentRepresentationDataSet(Dataset):
         super().__init__()
         self.root = root
         # get the number of the file
-        # for here one more useless file
+        # todo: 如果不对，下面一行就不用剪去1
         self.number_txt = len(os.listdir(self.root)) - 1
         # get all the data path of txt
         self.datapath = [os.path.join(self.root, str(i) + '.txt') for i in range(self.number_txt)]
         print('The size of %s data is %d' % (split, self.number_txt))
 
-        self.cache_size = cache_size  # how many data points to cache in memory
-        self.cache = {}  # from index to (point_set, cls) tuple
+        self.cache_size = cache_size  
+        self.cache = {} 
 
     def __len__(self):
         return len(self.datapath)
