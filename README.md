@@ -40,3 +40,17 @@ Version 05 运行指南：
 - 在train_multi_gpus_v1.py中修改：
   - from knn_model import SimAttention_KNN
   - model在初始化的时候：model = SimAttention_KNN(aug_method, b_FPS, new_k_patch, online_encoder, crossed_method)
+
+Version 06 运行指南
+
+1. 在utils文件夹中新增save_latent_rep.py脚本，用来生成并存储上个模型针对原始数据处理的结果；
+2. 在utils文件夹中更新provider.py脚本，新增了函数feature_norm(), 用来归一化latent representation；
+3. 在主文件夹中更新dataloader.py脚本，里面新增LatentRepresentationDataSet类来读取上一步的结果；
+4. 在network文件夹中新增shape_classifier_2.py脚本，来定义分类网络；
+5. 在主文件夹中新增train_cls_with_lr.py脚本，用来根据上面结果来训练分类网络；
+
+注意，上面都是单核GPU，本地测试过，速度很快，所以就没写多核的～
+
+代码中需要更改的地方：
+1. save_latent_rep.py 中10，12，14行对应的文件地址；
+2. train_cls_with_lr.py  中14行对应的文件地址；
