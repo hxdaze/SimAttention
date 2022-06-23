@@ -32,7 +32,7 @@ class SimAttention_All_Cubes(nn.Module):
         aug2 = torch.Tensor(self.aug_function(x)).cuda()
 
         # B, 1024, 3
-       _,  sub1 =self.sub_function(aug1, 1024)
+        _, sub1 =self.sub_function(aug1, 1024)
         _, sub2 = self.sub_function(aug2, 1024)
         
         # B, 8, 1024, 3
