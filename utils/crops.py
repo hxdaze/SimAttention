@@ -128,9 +128,9 @@ def random_k_patch_1024(x, k=1024, n_patch=8, n_points=1024):
         result = []
         for i in range(point_set.shape[0]):
             result.append(random.sample(range(0, point_set.shape[1]), num))
-        return torch.Tensor(result)
+        return torch.tensor(result, dtype=torch.int64).cuda()
     
-    patch_centers_index = get_random_index(x, n_patch).cuda()  # torch.Size([B, n_patch])
+    patch_centers_index = get_random_index(x, n_patch)  # torch.Size([B, n_patch])
     center_point_xyz = index_points(x, patch_centers_index)  # [B, n_patch]
 
     idx = k_points(center_point_xyz, x, k)  # B, n_patch, 1024
