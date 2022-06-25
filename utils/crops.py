@@ -122,6 +122,29 @@ def new_k_patch_1024(x, k=1024, n_patch=8, n_points=1024):
     return new_patch
 
 
+def random_k_patch_1024(x, k=1024, n_patch=8, n_points=1024):
+    """knn function with random centroids"""
+    def get_random_index(point_set, num):
+        result = []
+        for i in range(point_set.shape[0]):
+            result.append(random.sample(range(0, point_set.shape[1]), num))
+        return torch.Tensor(result)
+    
+    patch_centers_index = get_random_index(x, n_patch).cuda()  # torch.Size([B, n_patch])
+    center_point_xyz = index_points(x, patch_centers_index)  # [B, n_patch]
+
+    idx = k_points(center_point_xyz, x, k)  # B, n_patch, 1024
+    idx = idx.permute(0, 2, 1)  # B, k, n_patch
+
+    new_patch = torch.zeros([n_patch, x.shape[0], n_points, x.shape[-1]]).cuda()
+    for i in range(n_patch):
+        patch_idx = idx[:, :, i].reshape(x.shape[0], -1)
+        patch_points = index_points(x, patch_idx)
+        new_patch[i] = patch_points
+    new_patch = new_patch.permute(1, 0, 2, 3)   # torch.Size([4, 8, 1024, 3])
+    return new_patch
+
+
 # Slice Method
 # patch（3 slices， 40% per slice）
 def get_slice_index(index_slice, ratio_per_slice, overlap_ratio, num_all_points):
