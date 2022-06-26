@@ -2,9 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
 def knn(x, k):
     inner = -2 * torch.matmul(x.transpose(2, 1), x)
     xx = torch.sum(x ** 2, dim=1, keepdim=True)
@@ -22,9 +19,9 @@ def get_graph_feature(x, k=20, idx=None, dim9=False):
             idx = knn(x, k=k)  # (batch_size, num_points, k)
         else:
             idx = knn(x[:, 6:], k=k)
-    # todo: rewrite this device in multi-gpu pattern
-    device = torch.device('cuda')
-    idx_base = torch.arange(0, batch_size, device=device).view(-1, 1, 1) * num_points
+    
+    t = torch.arange(0, batch_size).view(-1, 1, 1).cuda()
+    idx_base =  t * num_points
     idx = idx + idx_base
     idx = idx.view(-1)
     _, num_dims, _ = x.size()
