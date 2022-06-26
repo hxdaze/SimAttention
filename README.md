@@ -41,8 +41,7 @@ Version 05 运行指南：
   - from knn_model import SimAttention_KNN
   - model在初始化的时候：model = SimAttention_KNN(aug_method, b_FPS, new_k_patch, online_encoder, crossed_method)
 
-Version 06 运行指南
-
+Version 06 运行指南：
 1. 在utils文件夹中新增save_latent_rep.py脚本，用来生成并存储上个模型针对原始数据处理的结果；
 2. 在utils文件夹中更新provider.py脚本，新增了函数feature_norm(), 用来归一化latent representation；
 3. 在主文件夹中更新dataloader.py脚本，里面新增LatentRepresentationDataSet类来读取上一步的结果；
@@ -54,3 +53,15 @@ Version 06 运行指南
 代码中需要更改的地方：
 1. save_latent_rep.py 中10，12，14行对应的文件地址；
 2. train_cls_with_lr.py  中14行对应的文件地址；
+
+Version 07 运行指南：
+还是使用knn的那个基本配置来训练
+需要改变的地方：在train_multi_gpus_v1.py
+
+- 原来： from network.encoder import PCT_Encoder 
+- 改为： from network.dgcnn_encoder import DGCNN_encoder
+
+- 原来： online_encoder = PCT_Encoder().cuda()
+- 改为： online_encoder = DGCNN_encoder().cuda()
+
+- 超级参数：lr=0.001, lrf = 0.01, epoch = 100
