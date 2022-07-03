@@ -13,7 +13,7 @@ from torch.utils.tensorboard import SummaryWriter
 from dataloader import ModelNetDataSet
 from network.encoder import PCT_Encoder
 from network.augmentation import Batch_PointWOLF
-from utils.train_eval_utils import train_one_epoch
+from utils.train_eval_utils import train_one_epoch, evaluate
 from utils.distributed_utils import init_distributed_mode, dist, cleanup
 
 
@@ -58,19 +58,29 @@ def main_fn(rank, world_size, args):
 
     # 实例化训练数据集
     train_data_set = ModelNetDataSet(args.root, split='train')
+    test_data_set = ModelNetDataSet(args.root, split='test')
+
 
     # 给每个rank对应的进程分配训练的样本索引
     train_sampler = torch.utils.data.distributed.DistributedSampler(train_data_set)
+    test_sampler = torch.utils.data.distributed.DistributedSampler(test_data_set)
+
 
     # 将样本索引每batch_size个元素组成一个list
     train_batch_sampler = torch.utils.data.BatchSampler(
         train_sampler, batch_size, drop_last=True)
+    test_batch_sampler = torch.utils.data.BatchSampler(
+        test_sampler, batch_size, drop_last=True)
 
     nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])  # number of workers
     if rank == 0:
         print('Using {} dataloader workers every process'.format(nw))
     train_loader = torch.utils.data.DataLoader(train_data_set,
                                                batch_sampler=train_batch_sampler,
+                                               pin_memory=True,
+                                               num_workers=nw)
+    test_loader = torch.utils.data.DataLoader(test_data_set,
+                                               batch_sampler=test_batch_sampler,
                                                pin_memory=True,
                                                num_workers=nw)
 
@@ -105,17 +115,24 @@ def main_fn(rank, world_size, args):
     logger.info('Start training...')
     for epoch in range(args.epochs):
         train_sampler.set_epoch(epoch)
-        mean_loss = train_one_epoch(model=model,
+        train_mean_loss = train_one_epoch(model=model,
                                     optimizer=optimizer,
                                     data_loader=train_loader,
                                     device=device,
                                     epoch=epoch)
         scheduler.step()
 
+        # add evaluation
+        test_sampler.set_epoch(epoch)
+        test_mean_loss = evaluate(model=model,
+                                  data_loader=test_loader,
+                                  device=device)
+
         if rank == 0:
-            tags = ["loss", "learning_rate"]
-            tb_writer.add_scalar(tags[0], mean_loss, epoch)
+            tags = ["train_loss", "learning_rate", "eval_loss"]
+            tb_writer.add_scalar(tags[0], train_mean_loss, epoch)
             tb_writer.add_scalar(tags[1], optimizer.param_groups[0]["lr"], epoch)
+            tb_writer.add_scalar(tags[2], test_mean_loss, epoch)
 
             torch.save(model.module.state_dict(), "./weights/model-{}.pth".format(epoch))
 
@@ -138,9 +155,7 @@ if __name__ == '__main__':
     parser.add_argument('--syncBN', type=bool, default=True)
 
     # 数据集所在根目录
-    parser.add_argument('--root', type=str,
-                        default='./data/modelnet40_normal_resampled')
-
+    parser.add_argument('--root', type=str, default='./data/modelnet40_normal_resampled')
     parser.add_argument('--freeze_layers', type=bool, default=False)
     # 不要改该参数，系统会自动分配
     parser.add_argument('--device', default='cuda', help='device id (i.e. 0 or 0,1 or cpu)')
