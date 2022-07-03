@@ -106,11 +106,11 @@ class SimAttention_KNN(nn.Module):
             for parameter in self.target_x_attn.parameters():
                 parameter.requires_grad = False
 
+            attn_feature_2 = self.target_x_attn(sub_feature_2, crop_feature)
+            attn_feature_4 = self.target_x_attn(sub_feature_4, crop_feature)
         # online and target
         attn_feature_1 = self.online_x_attn(sub_feature_1, crop_feature)
-        attn_feature_2 = self.target_x_attn(sub_feature_2, crop_feature)
         attn_feature_3 = self.online_x_attn(sub_feature_3, crop_feature)
-        attn_feature_4 = self.target_x_attn(sub_feature_4, crop_feature)
 
         # loss
         loss_1 = loss_fn(attn_feature_1, attn_feature_2)
