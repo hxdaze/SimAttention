@@ -52,24 +52,26 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch):
 @torch.no_grad()
 def evaluate(model, data_loader, device):
     model.eval()
+    eval_mean_loss = torch.zeros(1).to(device)
 
-    # 用于存储预测正确的样本个数
-    sum_num = torch.zeros(1).to(device)
-
-    # 在进程0中打印验证进度
     if is_main_process():
         data_loader = tqdm(data_loader, file=sys.stdout)
 
     for step, data in enumerate(data_loader):
-        images, labels = data
-        pred = model(images.to(device))
-        pred = torch.max(pred, dim=1)[1]
-        sum_num += torch.eq(pred, labels.to(device)).sum()
+        points, _ = data
+        points = points.numpy()
+        points = random_point_dropout(points)
+        points = random_scale_point_cloud(points)
+        points = shift_point_cloud(points)
+        points = torch.Tensor(points).cuda()
+        
+        loss = model(points)
+        loss = loss.mean()  # 将多个GPU返回的loss取平均
+        loss = reduce_value(loss, average=True)
+        eval_mean_loss = (eval_mean_loss * step + loss.detach()) / (step + 1)  # update mean losses
 
     # 等待所有进程计算完毕
     if device != torch.device("cpu"):
         torch.cuda.synchronize(device)
 
-    sum_num = reduce_value(sum_num, average=False)
-
-    return sum_num.item()
+    return eval_mean_loss.item()
