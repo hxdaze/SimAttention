@@ -28,12 +28,12 @@ class SimAttention_All_Cubes(nn.Module):
 
     def forward(self, x):
         x = x.cpu().numpy()
-        aug1 =  torch.Tensor(self.aug_function(x)).cuda()
-        aug2 = torch.Tensor(self.aug_function(x)).cuda()
+        aug1 = self.aug_function(x)
+        aug2 = self.aug_function(x)
 
         # B, 1024, 3
-        _, sub1 =self.sub_function(aug1, 1024)
-        _, sub2 = self.sub_function(aug2, 1024)
+        _, sub1 = self.sub_function(torch.Tensor().cuda(aug1), 1024)
+        _, sub2 = self.sub_function(torch.Tensor().cuda(aug2), 1024)
         
         # B, 8, 1024, 3
         cube1 = self.cube_function(aug1, 8, 0.2, 1024)
