@@ -57,11 +57,17 @@ Version 06 运行指南：
 Version 07 运行指南：
 还是使用knn的那个基本配置来训练
 需要改变的地方：在train_multi_gpus_v1.py
-
 - 原来： from network.encoder import PCT_Encoder 
 - 改为： from network.dgcnn_encoder import DGCNN_encoder
-
 - 原来： online_encoder = PCT_Encoder().cuda()
 - 改为： online_encoder = DGCNN_encoder().cuda()
-
 - 超级参数：lr=0.001, lrf = 0.01, epoch = 100
+
+Version 08 运行指南：
+
+- 项目中增加脚本文件slice_model.py 这个和model同一层级
+- 在utils文件夹中新增slices.py脚本文件，和crops.py同一层级
+- 在train_multi_gpus_v1.py中修改
+- from slice_model import SimAttention_All_Slices
+- from utils.slices import b_get_slice
+- model初始化的时候 model = SimAttention_All_Slices(aug_method, b_FPS, b_get_slice, online_encoder, crossed_method)
