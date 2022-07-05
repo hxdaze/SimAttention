@@ -32,12 +32,12 @@ class SimAttention_All_Cubes(nn.Module):
         aug2 = self.aug_function(x)
 
         # B, 1024, 3
-        _, sub1 = self.sub_function(torch.Tensor().cuda(aug1), 1024)
-        _, sub2 = self.sub_function(torch.Tensor().cuda(aug2), 1024)
+        _, sub1 = self.sub_function(torch.Tensor(aug1).cuda(), 1024)
+        _, sub2 = self.sub_function(torch.Tensor(aug2).cuda(), 1024)
         
         # B, 8, 1024, 3
-        cube1 = self.cube_function(aug1, 8, 0.2, 1024)
-        cube2 = self.cube_function(aug2, 8, 0.2, 1024)
+        cube1 = torch.Tensor(self.cube_function(aug1, 8, 0.2, 1024)).cuda()
+        cube2 = torch.Tensor(self.cube_function(aug2, 8, 0.2, 1024)).cuda()
 
         # [B, 1, N_f] N_f: output dimension of mlp: 1024
         sub_feature_1 = self.online_encoder(sub1)
