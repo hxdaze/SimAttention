@@ -15,6 +15,7 @@ def get_slice_index(index_slice, ratio_per_slice, overlap_ratio, num_all_points)
 def get_slice(point_set, xyz_dim, index_slice, npoints):
     # xyz_dim: 0, 1, 2 for x, y, z
     start_index, end_index = get_slice_index(index_slice, 0.4, 0.1, len(point_set))
+    # patch_index = point_set.argsort(axis=0)[start_index: end_index, xyz_dim]
     patch_index = np.argsort(point_set, axis=0)[start_index: end_index, xyz_dim]
     patch = point_set[patch_index]
     random.shuffle(patch)
