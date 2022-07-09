@@ -137,7 +137,7 @@ def main_fn(rank, world_size, args):
             tb_writer.add_scalar(tags[1], optimizer.param_groups[0]["lr"], epoch)
             tb_writer.add_scalar(tags[2], test_mean_loss, epoch)
 
-            torch.save(model.module.state_dict(), "./weights_v9/model_knn_1024_rdm-{}.pth".format(epoch))
+            torch.save(model.module.state_dict(), "./weights_v9/model_knn_1024_fps-{}.pth".format(epoch))
 
     # 删除临时缓存文件
     if rank == 0:
@@ -146,10 +146,10 @@ def main_fn(rank, world_size, args):
     cleanup()
 
 
-def run(ws):
+def run(ws, terminal_parameters):
     processes = []
     for rank in range(ws):
-        p = mp.Process(target=main_fn, args=(rank, ws, opt))
+        p = mp.Process(target=main_fn, args=(rank, ws, terminal_parameters))
         p.start()
         processes.append(p)
     for p in processes:
@@ -172,4 +172,4 @@ if __name__ == '__main__':
     parser.add_argument('--dist_url', default='env://', help='url used to set up distributed training')
     opt = parser.parse_args()
     world_size = opt.world_size
-    run(world_size)
+    run(world_size, opt)
