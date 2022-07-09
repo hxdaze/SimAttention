@@ -41,8 +41,7 @@ def init_process(rank, world_size, args):
     return checkpoint_path, rank, device
 
 
-def get_sampler_and_dataloader(args):
-    rank = args.rank
+def get_sampler_and_dataloader(rank, args):
     # 实例化训练数据集
     train_data_set = AugModelNetDataSet(args.root, split='train')
     test_data_set = AugModelNetDataSet(args.root, split='test')
@@ -104,7 +103,7 @@ def get_optimizer_and_scheduler(args, model):
 
 def main_fn(rank, world_size, args):
     checkpoint_path, rank, device = init_process(rank, world_size, args)
-    train_sampler, test_sampler, train_loader, test_loader = get_sampler_and_dataloader(args)
+    train_sampler, test_sampler, train_loader, test_loader = get_sampler_and_dataloader(rank, args)
     model = get_model(args, device, checkpoint_path, rank)
     optimizer, scheduler = get_optimizer_and_scheduler(args, model)
 
