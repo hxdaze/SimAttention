@@ -68,7 +68,7 @@ def get_sampler_and_dataloader(rank, args):
     return train_sampler, test_sampler, train_loader, test_loader
 
 
-def get_model(args, device, checkpoint_path, rank):
+def get_model(device, checkpoint_path, rank, args):
     online_encoder = PCT_Encoder().cuda()
     crossed_method = CrossedAttention(1024).cuda()
 
@@ -94,7 +94,7 @@ def get_model(args, device, checkpoint_path, rank):
     return model
 
 
-def get_optimizer_and_scheduler(args, model):
+def get_optimizer_and_scheduler(model, args):
     optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.005)
     lf = lambda x: ((1 + math.cos(x * math.pi / args.epochs)) / 2) * (1 - args.lrf) + args.lrf
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lf)
@@ -104,8 +104,8 @@ def get_optimizer_and_scheduler(args, model):
 def main_fn(rank, world_size, args):
     checkpoint_path, rank, device = init_process(rank, world_size, args)
     train_sampler, test_sampler, train_loader, test_loader = get_sampler_and_dataloader(rank, args)
-    model = get_model(args, device, checkpoint_path, rank)
-    optimizer, scheduler = get_optimizer_and_scheduler(args, model)
+    model = get_model(device, checkpoint_path, rank, args)
+    optimizer, scheduler = get_optimizer_and_scheduler(model, args)
 
     if rank == 0:  # 在第一个进程中打印信息，并实例化tensorboard
         print(args)
