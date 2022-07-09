@@ -9,15 +9,12 @@ class SimAttention_KNN(nn.Module):
     """
     crop method uses 8 knn patches
     """
-
     def __init__(self,
-                 aug_function,
                  sub_function,
                  knn_function,
                  online_encoder,
                  crossed_attention_method):
         super().__init__()
-        self.aug_function = aug_function
         self.sub_function = sub_function
         self.knn_function = knn_function
 
@@ -27,11 +24,7 @@ class SimAttention_KNN(nn.Module):
         self.online_x_attn = crossed_attention_method
         self.target_x_attn = None
 
-    def forward(self, x):
-        x = x.cpu().numpy()
-        aug1 = torch.Tensor(self.aug_function(x)).cuda()
-        aug2 = torch.Tensor(self.aug_function(x)).cuda()
-
+    def forward(self, aug1, aug2):
         # B, 1024, 3
         _, sub1 = self.sub_function(aug1, 1024)
         _, sub2 = self.sub_function(aug2, 1024)
@@ -105,9 +98,9 @@ class SimAttention_KNN(nn.Module):
                     target_params.data = target_weight * tao + (1 - tao) * online_weight
             for parameter in self.target_x_attn.parameters():
                 parameter.requires_grad = False
-
             attn_feature_2 = self.target_x_attn(sub_feature_2, crop_feature)
             attn_feature_4 = self.target_x_attn(sub_feature_4, crop_feature)
+
         # online and target
         attn_feature_1 = self.online_x_attn(sub_feature_1, crop_feature)
         attn_feature_3 = self.online_x_attn(sub_feature_3, crop_feature)
