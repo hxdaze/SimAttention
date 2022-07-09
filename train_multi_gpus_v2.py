@@ -137,7 +137,7 @@ def main_fn(rank, world_size, args):
             tb_writer.add_scalar(tags[1], optimizer.param_groups[0]["lr"], epoch)
             tb_writer.add_scalar(tags[2], test_mean_loss, epoch)
 
-            torch.save(model.module.state_dict(), "./weights_v9/model_knn_1024_fps-{}.pth".format(epoch))
+            torch.save(model.module.state_dict(), "./weights_v9/model_knn_1024_rdm-{}.pth".format(epoch))
 
     # 删除临时缓存文件
     if rank == 0:
