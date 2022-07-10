@@ -23,9 +23,7 @@ def init_process(rank, world_size, args):
     args.rank = rank
     args.world_size = world_size
     args.gpu = rank
-
     args.distributed = True
-
     torch.cuda.set_device(args.gpu)
     args.dist_backend = 'nccl'
     print('| distributed init (rank {}): {}'.format(
