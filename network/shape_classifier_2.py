@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 
-class ShapeClassifier_2(nn.Module):
+class Classifier(nn.Module):
     def __init__(self):
         super().__init__()
         self.relu = nn.ReLU()
