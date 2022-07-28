@@ -202,3 +202,45 @@ class PCT_Encoder(nn.Module):
         x = torch.max(x, 2)[0]
         x = x.view(batch_size, -1)
         return x.reshape(batch_size, 1, -1)
+    
+    
+class PCT_Encoder_Plus(nn.Module):
+    # add avg feature into the model
+    def __init__(self):
+        super().__init__()
+        d_points = 3
+        self.conv1 = nn.Conv1d(d_points, 64, kernel_size=1, bias=False)
+        self.conv2 = nn.Conv1d(64, 64, kernel_size=1, bias=False)
+        self.bn1 = nn.BatchNorm1d(64)
+        self.bn2 = nn.BatchNorm1d(64)
+        self.gather_local_0 = Local_op(in_channels=128, out_channels=128)
+        self.gather_local_1 = Local_op(in_channels=256, out_channels=256)
+        self.pt_last = StackedAttention()
+
+        self.relu = nn.ReLU()
+        self.conv_fuse = nn.Sequential(nn.Conv1d(1280, 1024, kernel_size=1, bias=False),
+                                       nn.BatchNorm1d(1024),
+                                       nn.LeakyReLU(negative_slope=0.2))
+
+    def forward(self, x):
+        xyz = x[..., 0:3]
+        x = x.permute(0, 2, 1)
+        batch_size, _, _ = x.size()
+        x = self.relu(self.bn1(self.conv1(x)))  # B, D, N
+        x = self.relu(self.bn2(self.conv2(x)))  # B, D, N
+        x = x.permute(0, 2, 1)
+        new_xyz, new_feature = sample_and_group(npoint=512, nsample=32, xyz=xyz, points=x)
+        feature_0 = self.gather_local_0(new_feature)
+        feature = feature_0.permute(0, 2, 1)
+        new_xyz, new_feature = sample_and_group(npoint=256, nsample=32, xyz=new_xyz, points=feature)
+        feature_1 = self.gather_local_1(new_feature)
+
+        x = self.pt_last(feature_1)
+        x = torch.cat([x, feature_1], dim=1)
+        x = self.conv_fuse(x)
+        x_max = torch.max(x, 2)[0] # [B, 1024]
+        x_avg = x.mean(dim=2)  # [B, 1024]
+        x = torch.cat((x_max, x_avg), dim=1)  # [B, 2048]
+        x = x[:, ::2]  # [B, 1024]
+        x = x.view(batch_size, -1)
+        return x.reshape(batch_size, 1, -1)
