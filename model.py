@@ -14,7 +14,7 @@ def loss_fn(x, y):
     return 2 - 2 * (x * y).sum(dim=-1)
 
 
-# project function
+# project function from BYOL
 class ProjectMLP(nn.Module):
     def __init__(self, input_dim=1024, output_dim=512, hidden_size=2048):
         super(ProjectMLP, self).__init__()
@@ -31,6 +31,32 @@ class ProjectMLP(nn.Module):
         x = self.l2(self.relu(x))
         return x.reshape(x.shape[0], 1, -1)
 
+    
+# simsam project function
+class ProjectMLP2(nn.Module):
+    def __init__(self, input_dim=1024, output_dim=1024, hidden_size=4096):
+        super(ProjectMLP, self).__init__()
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        self.hidden_size = hidden_size
+
+        self.l1 = nn.Linear(input_dim, hidden_size)
+        self.bn1 = nn.BatchNorm1d(hidden_size)
+        self.relu1 = nn.ReLU(inplace=True)
+
+        self.l2 = nn.Linear(hidden_size, hidden_size)
+        self.bn2 = nn.BatchNorm1d(hidden_size)
+        self.relu2 = nn.ReLU(inplace=True)
+
+        self.l3 = nn.Linear(hidden_size, output_dim)
+        self.bn3 = nn.BatchNorm1d(output_dim)
+
+
+    def forward(self, x):
+        x = self.bn1(self.l1(x.reshape(x.shape[0], -1)))
+        x = self.bn2(self.l2(self.relu1(x)))
+        x = self.bn3(self.l3(self.relu2(x)))
+        return x.reshape(x.shape[0], 1, -1)
 
 # crossed attention method:
 # todo: method_1: train 2 different CAs
