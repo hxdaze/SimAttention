@@ -35,7 +35,7 @@ class ProjectMLP(nn.Module):
 # simsam project function
 class ProjectMLP2(nn.Module):
     def __init__(self, input_dim=1024, output_dim=1024, hidden_size=4096):
-        super(ProjectMLP, self).__init__()
+        super(ProjectMLP2, self).__init__()
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.hidden_size = hidden_size
